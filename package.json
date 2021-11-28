@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test":"",
-    "start": "node app"
+    "start": "node app.js"
   },
   "author": "Christian Jimenez",
   "license": "MIT",

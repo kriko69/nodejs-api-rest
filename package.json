@@ -4,7 +4,7 @@
   "description": "Ejemplo de REST server",
   "main": "app.js",
   "scripts": {
-
+    "test":"",
     "start": "node app"
   },
   "author": "Christian Jimenez",

@@ -3,7 +3,11 @@
 const {Router} = require('express');
 const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosGetTodos } = require('../controllers/users');
 const {check} = require('express-validator');
+
 const { validarCampos } = require('../middlewares/validar-campos');
+const { validarJWT } = require('../middlewares/validar-jwt');
+const { esAdminRol, tieneRol } = require('../middlewares/validar-rol');
+
 const { esRolValido, correoExiste, existeUsuario } = require('../helpers/db-validators');
 
 //constante necesario para la creacion de las rutas
@@ -48,6 +52,9 @@ router.put('/:id',[
 ],usuariosPut);
 
 router.delete('/:id',[
+    validarJWT,
+    // esAdminRol,
+    tieneRol('ADMIN_ROL'),
     check('id','No es un ID valido').isMongoId(), //valido si es un ID valido para mongo NECESARIO
     check('id').custom(async (id)=>{
         await existeUsuario(id);

@@ -10,7 +10,72 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
   <body>
-      <h1>Acceso Denegado</h1>
+      <h1>Google SignIn</h1>
+      <hr>
+
+      <!--boton de google-->
+      <div id="g_id_onload"
+         data-client_id="1014579726020-ug1dm2ramd8rfnhlmdrd18cv7ttdon7d.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-shape="rectangular"
+         data-logo_alignment="left">
+      </div>
+
+      <!--boton de signup-->
+      <button id="google_signout">
+        Signout
+      </button>
+
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
+      <script>
+
+        //mandamos el id_token a nuestro backend
+        function handleCredentialResponse(response) {
+
+          //google toke : id token
+          //console.log(response.credential);
+          const body={id_token:response.credential};
+
+          fetch('http://localhost:8080/api/auth/google',{
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            body: JSON.stringify(body)
+          })
+            .then((resp)=>resp.json()) //respuesta la ponemos en json
+            .then((resp=>{
+              console.log(resp); //respuesta en json del servidor
+              localStorage.setItem('email',resp.user.correo); //guardamos el correo en el localStorage
+            }))
+            .catch(console.warn);
+      
+
+        }
+
+        //proceso de signup
+        //obtenemos el boton por ID
+        const boton=document.getElementById('google_signout');
+        //creamos una funcion onclick
+        boton.onclick= () =>{
+           console.log(google.accounts.id); //informacion de google
+          //nos salimos de la cuenta usando el correo uardado en el localStorage
+           google.accounts.id.revoke(localStorage.getItem('email'),(done)=>{
+            //en el callback
+            //limpiamos el localStorage
+            localStorage.clear();
+            //recargamos pagina
+            location.reload();
+           });
+        };
+      </script>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

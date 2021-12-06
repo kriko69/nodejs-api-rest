@@ -42,7 +42,8 @@ const userSchema= Schema({
 
 //ocultar parametros, hacemos como oculto
 userSchema.methods.toJSON=function(){
-    const {__v,password,...user} = this.toObject(); //...user tiene todos los demas campos menos __v y password
+    const {__v,password,_id,...user} = this.toObject(); //...user tiene todos los demas campos menos __v y password
+    user.uid=_id; //cambiamos el valor de _id por uid 
     return user;
 };
 

@@ -12,6 +12,7 @@ const cors = require('cors');
 //invocamos la conexion con mongo
 const { connection } = require('../database/config');
 
+const fileUpload = require('express-fileupload');
 class Server {
 
     constructor(){
@@ -20,13 +21,24 @@ class Server {
         //definimos el puerto del servidor con el valor de la variable de entorno PORT
         this.port = process.env.PORT;
         //definimos un path general para usuario como API
-        this.usuariosPath='/api/users';
+        //this.usuariosPath='/api/users';
+        //this.authPath='/api/auth';
+        //this.categoriasPath='/api/categorias';
+
+        this.paths={
+            users:'/api/users',
+            auth:'/api/auth',
+            categorias:'/api/categorias',
+            productos:'/api/productos',
+            buscar:'/api/buscar',
+            upload:'/api/upload'
+        }
 
         //conexion base de datos
         this.DBconnection();
 
         //middleware
-        this.middleware();
+           this.middleware();
 
         //routes
         this.routes();
@@ -34,7 +46,12 @@ class Server {
 
     routes(){
         //invocamos las rutas de usuarios
-        this.app.use(this.usuariosPath,require('../routes/user'));
+        this.app.use(this.paths.users,require('../routes/user'));
+        this.app.use(this.paths.auth,require('../routes/auth'));
+        this.app.use(this.paths.categorias,require('../routes/categoria'));
+        this.app.use(this.paths.productos,require('../routes/producto'));
+        this.app.use(this.paths.buscar,require('../routes/buscar'));
+        this.app.use(this.paths.upload,require('../routes/upload'));
 
     }
 
@@ -51,6 +68,13 @@ class Server {
 
         //LECTURA Y PARSEO DEL BODY todo lo que llega lo serializa a json
         this.app.use(express.json());
+
+        //carga de archivos
+        this.app.use(fileUpload({
+            useTempFiles : true,
+            tempFileDir : '/tmp/',
+            createParentPath:true
+        }));
 
     }
 

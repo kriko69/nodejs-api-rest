@@ -89,13 +89,25 @@ const usuariosPut=async (req,res) => {
 }
 
 const usuariosDelete=async (req,res) => {
-    const {id} = req.params;
-    const query={estado:false};
-    const userDB = await User.findByIdAndUpdate(id,query);
-    res.json({
-        msg:'Usuario eliminado',
-        user:userDB
-    })
+    const {id,user} = req.params;
+    //obtenemos el usuario del token
+    const userAuth=req.user;
+    if(id===req.uid)
+    {
+        res.status(400).json({
+            msg:'No puede eliminarse a usted mismo',
+        })
+    }
+    else{
+        const query={estado:false};
+        const userDB = await User.findByIdAndUpdate(id,query);
+        res.json({
+            msg:'Usuario eliminado',
+            user:userDB
+        });
+    }
+
+    
 }
 
 //exporto modulos
